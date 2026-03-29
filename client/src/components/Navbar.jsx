@@ -68,9 +68,6 @@ const Navbar = () => {
               <Link to="/bookmarks" className={`${navLink} ${isActive('/bookmarks') ? activeClass : inactiveClass}`}>
                 Bookmarks
               </Link>
-              <Link to="/preferences" className={`${navLink} ${isActive('/preferences') ? activeClass : inactiveClass}`}>
-                Preferences
-              </Link>
               <span className="text-sm text-gray-400 dark:text-gray-500">
                 Hi, {user.name.split(' ')[0]} 👋
               </span>
@@ -125,6 +122,7 @@ const Navbar = () => {
           {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
         </button>
       </div>
+
 
       {user ? (
         <>

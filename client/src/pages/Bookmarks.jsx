@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getBookmarks, deleteBookmark, summarizeArticle } from '../services/api';
 
@@ -82,7 +82,21 @@ const Bookmarks = () => {
   return (
     <div className="w-full max-w-5xl mx-auto pb-8">
 
-      {/* Empty State */}
+      {/* Page Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1">Library</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">🔖 Bookmarks</h1>
+        </div>
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-700 transition-all shadow-sm"
+        >
+          ← Home
+        </Link>
+      </div>
+
+
       {bookmarks.length === 0 ? (
         <div className="text-center py-20 bg-white/40 dark:bg-gray-900/40 backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-gray-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <p className="text-5xl mb-4">📭</p>

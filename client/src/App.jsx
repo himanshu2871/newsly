@@ -12,6 +12,9 @@ import ScrollToTop from './components/ScrollToTop';
 import NotFound from './pages/NotFound';
 import BackToTop from './components/BackToTop';
 import DashboardLayout from './components/DashboardLayout';
+import History from './pages/History';
+import DailyNews from './pages/DailyNews';
+
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -39,7 +42,11 @@ const AppRoutes = () => {
             <Route path="/" element={<Home />} />
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
             <Route path="/preferences" element={<ProtectedRoute><Preferences /></ProtectedRoute>} />
+            <Route path="/history" element={<History />} />
+            <Route path="/dailynews" element={<DailyNews />} />
           </Route>
+
+
         </Routes>
       </AnimatePresence>
     </>

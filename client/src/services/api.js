@@ -32,6 +32,12 @@ export const saveBookmark = (data) => API.post('/api/bookmarks', data);
 export const deleteBookmark = (id) => API.delete(`/api/bookmarks/${id}`);
 export const checkBookmark = (url) => API.get(`/api/bookmarks/check?url=${encodeURIComponent(url)}`);
 
-// Preferences
 export const getPreferences = () => API.get('/api/preferences');
 export const updatePreferences = (topics) => API.put('/api/preferences', { topics });
+
+// History
+export const getTodayInHistory = () => API.get('/api/history/today');
+
+// Daily News Brief
+export const getDailyBrief = () => API.get('/api/dailynews/brief');
+

@@ -87,19 +87,22 @@ const NewsCard = ({ article }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/50 dark:border-gray-700/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition-all duration-300 flex flex-col"
+      variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+      transition={{ duration: 0.35 }}
+      className="group bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/50 dark:border-gray-700/50 hover:shadow-[0_12px_40px_rgb(0,0,0,0.10)] dark:hover:shadow-[0_12px_40px_rgb(0,0,0,0.35)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
     >
-      {/* Image */}
+      {/* Image with gradient overlay */}
       {article.urlToImage && (
-        <img
-          src={article.urlToImage}
-          alt={article.title}
-          className="w-full h-48 object-cover"
-          onError={(e) => e.target.style.display = 'none'}
-        />
+        <div className="relative w-full h-48 overflow-hidden">
+          <img
+            src={article.urlToImage}
+            alt={article.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => e.target.parentElement.style.display = 'none'}
+          />
+          {/* Bottom gradient fade */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+        </div>
       )}
 
       <div className="p-5 flex flex-col flex-1">

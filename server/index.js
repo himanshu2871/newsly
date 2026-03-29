@@ -7,6 +7,8 @@ const newsRoutes = require('./routes/news');
 const summaryRoutes = require('./routes/summary');
 const bookmarkRoutes = require('./routes/bookmarks');
 const preferenceRoutes = require('./routes/preferences');
+const historyRoutes = require('./routes/history');
+const dailynewsRoutes = require('./routes/dailynews');
 
 
 const app = express();
@@ -18,6 +20,8 @@ app.use('/api/news', newsRoutes);
 app.use('/api/summary', summaryRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/preferences', preferenceRoutes);
+app.use('/api/history', historyRoutes);
+app.use('/api/dailynews', dailynewsRoutes);
 
 app.get('/', (req, res) => res.json({ message: 'Server running!' }));
 

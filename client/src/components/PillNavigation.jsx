@@ -1,19 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const NAV_ITEMS = [
-  { path: '/', label: 'Home', icon: '🏠' },
-  { path: '/bookmarks', label: 'Bookmarks', icon: '🔖' },
-  { path: '/preferences', label: 'Preferences', icon: '⚙️' },
-];
-
 const PillNavigation = () => {
   const location = useLocation();
 
+  const navItems = [
+    { path: `/?topic=${localStorage.getItem('newsly_topic') || 'latest'}`, matchPath: '/', label: 'Home', icon: '🏠' },
+    { path: '/dailynews', matchPath: '/dailynews', label: 'Daily Brief', icon: '☀️' },
+    { path: '/history', matchPath: '/history', label: 'History', icon: '🕰️' },
+  ];
+
   return (
     <div className="flex bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-full border border-white/50 dark:border-gray-700/50 p-1 relative shadow-[0_8px_30px_rgb(0,0,0,0.04)] items-center">
-      {NAV_ITEMS.map((item) => {
-        const isActive = location.pathname === item.path;
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.matchPath;
 
         return (
           <Link

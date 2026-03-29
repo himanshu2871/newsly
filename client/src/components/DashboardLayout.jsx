@@ -7,10 +7,12 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const activeTopic = searchParams.get('topic') || 'latest';
+  // Persist topic across page navigations using localStorage
+  const savedTopic = localStorage.getItem('newsly_topic') || 'latest';
+  const activeTopic = searchParams.get('topic') || savedTopic;
 
   const handleTopicChange = (topicId) => {
-    // If we're on a different tab, navigating instantly switches back to feed
+    localStorage.setItem('newsly_topic', topicId);
     navigate(`/?topic=${topicId}`);
   };
 
