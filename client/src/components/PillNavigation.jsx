@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Home, Sun, Clock } from 'lucide-react';
 
 const PillNavigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: `/?topic=${localStorage.getItem('newsly_topic') || 'latest'}`, matchPath: '/', label: 'Home', icon: '🏠' },
-    { path: '/dailynews', matchPath: '/dailynews', label: 'Daily Brief', icon: '☀️' },
-    { path: '/history', matchPath: '/history', label: 'History', icon: '🕰️' },
+    { path: `/?topic=${localStorage.getItem('newsly_topic') || 'latest'}`, matchPath: '/', label: 'Home', icon: <Home size={16} /> },
+    { path: '/dailynews', matchPath: '/dailynews', label: 'Daily Brief', icon: <Sun size={16} /> },
+    { path: '/history', matchPath: '/history', label: 'History', icon: <Clock size={16} /> },
   ];
 
   return (
@@ -32,7 +33,7 @@ const PillNavigation = () => {
                 transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
               />
             )}
-            <span className="text-base">{item.icon}</span>
+            <span className="flex items-center">{item.icon}</span>
             <span className="hidden sm:inline">{item.label}</span>
           </Link>
         );

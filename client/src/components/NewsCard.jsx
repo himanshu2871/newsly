@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { summarizeArticle, saveBookmark, deleteBookmark, checkBookmark } from '../services/api';
+import { Bookmark, Sparkles, EyeOff, Loader2, ExternalLink } from 'lucide-react';
 
 const NewsCard = ({ article }) => {
   const { user } = useAuth();
@@ -135,8 +136,8 @@ const NewsCard = ({ article }) => {
             animate={{ opacity: 1, height: 'auto' }}
             className="mb-4 p-3 bg-white/40 dark:bg-black/20 backdrop-blur-lg border border-white/40 dark:border-white/5 rounded-xl shadow-inner"
           >
-            <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
-              ✨ AI Summary
+            <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2 flex items-center gap-1.5">
+              <Sparkles size={12} /> AI Summary
             </p>
             <ul className="space-y-2 mt-2">
               {bullets.map((b, i) => {
@@ -168,20 +169,27 @@ const NewsCard = ({ article }) => {
           <button
             onClick={handleSummary}
             disabled={summaryLoading}
-            className="flex-1 text-xs py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium transition"
+            className="flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium transition"
           >
-            {summaryLoading ? '⏳ Summarizing...' : showSummary ? '🙈 Hide Summary' : '✨ AI Summary'}
+            {summaryLoading
+              ? <><Loader2 size={13} className="animate-spin" /> Summarizing...</>
+              : showSummary
+                ? <><EyeOff size={13} /> Hide Summary</>
+                : <><Sparkles size={13} /> AI Summary</>}
           </button>
 
           <button
             onClick={handleBookmark}
-            className={`p-2 rounded-xl border transition ${
-              bookmarked
-                ? 'bg-yellow-50/80 dark:bg-yellow-900/30 backdrop-blur-md border border-yellow-300 dark:border-yellow-700/50 text-yellow-500 shadow-sm'
-                : 'bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 text-gray-500 hover:text-yellow-500 shadow-sm'
-            }`}
+            title={bookmarked ? 'Remove bookmark' : 'Save bookmark'}
+            className="p-2 rounded-xl bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 transition shadow-sm"
           >
-            {bookmarked ? '🔖' : '📑'}
+            <Bookmark
+              size={16}
+              className={bookmarked
+                ? 'fill-blue-500 text-blue-500'
+                : 'fill-transparent text-gray-500 hover:text-blue-500'
+              }
+            />
           </button>
 
           <a
@@ -190,7 +198,7 @@ const NewsCard = ({ article }) => {
             rel="noopener noreferrer"
             className="p-2 rounded-xl bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 text-gray-500 hover:text-blue-600 transition shadow-sm"
           >
-            🔗
+            <ExternalLink size={16} />
           </a>
         </div>
       </div>

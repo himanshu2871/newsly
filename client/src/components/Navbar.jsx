@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { Sun, Moon, Menu, X, Home, Bookmark, Settings, LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
@@ -43,7 +44,7 @@ const Navbar = () => {
             />
           </Link>
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
-            <Link to="/" className="text-xl sm:text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 leading-none">
+            <Link to="/" className="text-lg sm:text-xl font-semibold tracking-tight text-blue-600 dark:text-blue-400 leading-none">
               Newsly
             </Link>
             <div className="flex items-center sm:border-l sm:border-gray-300 sm:dark:border-gray-700 sm:pl-3 mt-1 sm:mt-0">
@@ -60,7 +61,7 @@ const Navbar = () => {
             onClick={toggleTheme}
             className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
-            {isDark ? '☀️' : '🌙'}
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {user ? (
@@ -69,7 +70,7 @@ const Navbar = () => {
                 Bookmarks
               </Link>
               <span className="text-sm text-gray-400 dark:text-gray-500">
-                Hi, {user.name.split(' ')[0]} 👋
+                Hi, {user.name.split(' ')[0]}
               </span>
               <button
                 onClick={handleLogout}
@@ -99,7 +100,7 @@ const Navbar = () => {
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
           >
-            {menuOpen ? '✕' : '☰'}
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
@@ -119,7 +120,7 @@ const Navbar = () => {
           onClick={toggleTheme}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition text-sm font-medium"
         >
-          {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          {isDark ? <><Sun size={15} /> Light Mode</> : <><Moon size={15} /> Dark Mode</>}
         </button>
       </div>
 
@@ -127,34 +128,34 @@ const Navbar = () => {
       {user ? (
         <>
           <p className="text-sm text-gray-400 dark:text-gray-500 pb-1">
-            Hi, {user.name.split(' ')[0]} 👋
+            Hi, {user.name.split(' ')[0]}
           </p>
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
           >
-            🏠 Home
+            <Home size={16} /> Home
           </Link>
           <Link
             to="/bookmarks"
             onClick={() => setMenuOpen(false)}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
           >
-            🔖 Bookmarks
+            <Bookmark size={16} /> Bookmarks
           </Link>
           <Link
             to="/preferences"
             onClick={() => setMenuOpen(false)}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
           >
-            ⚙️ Preferences
+            <Settings size={16} /> Preferences
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full text-left text-sm font-medium text-red-500 hover:text-red-600 py-2"
+            className="flex items-center gap-2 w-full text-left text-sm font-medium text-red-500 hover:text-red-600 py-2"
           >
-            🚪 Logout
+            <LogOut size={16} /> Logout
           </button>
         </>
       ) : (
@@ -162,9 +163,9 @@ const Navbar = () => {
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
           >
-            🏠 Home
+            <Home size={16} /> Home
           </Link>
           <Link
             to="/login"

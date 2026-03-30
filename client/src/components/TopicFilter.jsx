@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Menu } from 'lucide-react';
 
 const TOPICS = [
-  { label: '🔥 Latest',        value: 'latest' },
-  { label: '⭐ My Feed',        value: 'preferred' },
-  { label: '🇮🇳 India',         value: 'india' },
-  { label: '💻 Technology',    value: 'technology' },
-  { label: '⚽ Sports',        value: 'sports' },
-  { label: '🏛️ Politics',      value: 'politics' },
-  { label: '💰 Finance',       value: 'finance' },
-  { label: '🎬 Entertainment', value: 'entertainment' },
-  { label: '🏥 Health',        value: 'health' },
-  { label: '🔬 Science',       value: 'science' },
+  { label: 'Latest',        value: 'latest' },
+  { label: 'My Feed',       value: 'preferred' },
+  { label: 'India',         value: 'india' },
+  { label: 'Technology',    value: 'technology' },
+  { label: 'Sports',        value: 'sports' },
+  { label: 'Politics',      value: 'politics' },
+  { label: 'Finance',       value: 'finance' },
+  { label: 'Entertainment', value: 'entertainment' },
+  { label: 'Health',        value: 'health' },
+  { label: 'Science',       value: 'science' },
 ];
 
 const TopicFilter = ({ activeTopic, onTopicChange }) => {
@@ -39,7 +40,7 @@ const TopicFilter = ({ activeTopic, onTopicChange }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 sm:gap-3 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 text-gray-800 dark:text-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-blue-400 hover:bg-white/80 dark:hover:bg-gray-900/80 transition-all"
       >
-        <span className="text-base sm:text-lg">☰</span>
+        <Menu size={18} className="text-gray-600 dark:text-gray-300 flex-shrink-0" />
         <span className="font-medium text-xs sm:text-sm whitespace-nowrap truncate max-w-[80px] sm:max-w-none">{activeLabel}</span>
       </button>
 

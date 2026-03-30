@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getPreferences, updatePreferences } from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { SlidersHorizontal, Cpu, Trophy, Landmark, DollarSign, Clapperboard, HeartPulse, FlaskConical, Globe, Check, Loader2, ArrowLeft } from 'lucide-react';
 
 const ALL_TOPICS = [
-  { label: 'Technology',    value: 'technology',    icon: '💻', color: 'from-blue-500/20 to-cyan-500/10 border-blue-400/40 dark:border-blue-600/30 text-blue-700 dark:text-blue-300' },
-  { label: 'Sports',        value: 'sports',        icon: '⚽', color: 'from-green-500/20 to-emerald-500/10 border-green-400/40 dark:border-green-600/30 text-green-700 dark:text-green-300' },
-  { label: 'Politics',      value: 'politics',      icon: '🏛️', color: 'from-purple-500/20 to-indigo-500/10 border-purple-400/40 dark:border-purple-600/30 text-purple-700 dark:text-purple-300' },
-  { label: 'Finance',       value: 'finance',       icon: '💰', color: 'from-amber-500/20 to-yellow-500/10 border-amber-400/40 dark:border-amber-600/30 text-amber-700 dark:text-amber-300' },
-  { label: 'Entertainment', value: 'entertainment', icon: '🎬', color: 'from-pink-500/20 to-rose-500/10 border-pink-400/40 dark:border-pink-600/30 text-pink-700 dark:text-pink-300' },
-  { label: 'Health',        value: 'health',        icon: '🏥', color: 'from-red-500/20 to-orange-500/10 border-red-400/40 dark:border-red-600/30 text-red-700 dark:text-red-300' },
-  { label: 'Science',       value: 'science',       icon: '🔬', color: 'from-cyan-500/20 to-teal-500/10 border-cyan-400/40 dark:border-cyan-600/30 text-cyan-700 dark:text-cyan-300' },
-  { label: 'India',         value: 'india',         icon: '🇮🇳', color: 'from-orange-500/20 to-amber-500/10 border-orange-400/40 dark:border-orange-600/30 text-orange-700 dark:text-orange-300' },
+  { label: 'Technology',    value: 'technology',    icon: <Cpu size={22} />,          color: 'from-blue-500/20 to-cyan-500/10 border-blue-400/40 dark:border-blue-600/30 text-blue-700 dark:text-blue-300' },
+  { label: 'Sports',        value: 'sports',        icon: <Trophy size={22} />,        color: 'from-green-500/20 to-emerald-500/10 border-green-400/40 dark:border-green-600/30 text-green-700 dark:text-green-300' },
+  { label: 'Politics',      value: 'politics',      icon: <Landmark size={22} />,      color: 'from-purple-500/20 to-indigo-500/10 border-purple-400/40 dark:border-purple-600/30 text-purple-700 dark:text-purple-300' },
+  { label: 'Finance',       value: 'finance',       icon: <DollarSign size={22} />,    color: 'from-amber-500/20 to-yellow-500/10 border-amber-400/40 dark:border-amber-600/30 text-amber-700 dark:text-amber-300' },
+  { label: 'Entertainment', value: 'entertainment', icon: <Clapperboard size={22} />,  color: 'from-pink-500/20 to-rose-500/10 border-pink-400/40 dark:border-pink-600/30 text-pink-700 dark:text-pink-300' },
+  { label: 'Health',        value: 'health',        icon: <HeartPulse size={22} />,    color: 'from-red-500/20 to-orange-500/10 border-red-400/40 dark:border-red-600/30 text-red-700 dark:text-red-300' },
+  { label: 'Science',       value: 'science',       icon: <FlaskConical size={22} />,  color: 'from-cyan-500/20 to-teal-500/10 border-cyan-400/40 dark:border-cyan-600/30 text-cyan-700 dark:text-cyan-300' },
+  { label: 'India',         value: 'india',         icon: <Globe size={22} />,         color: 'from-orange-500/20 to-amber-500/10 border-orange-400/40 dark:border-orange-600/30 text-orange-700 dark:text-orange-300' },
 ];
 
 const Preferences = () => {
@@ -52,7 +53,7 @@ const Preferences = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8 pb-36">
+    <div className="w-full max-w-2xl mx-auto px-4 py-8 pb-12">
 
       {/* Page Header */}
       <motion.div
@@ -64,9 +65,9 @@ const Preferences = () => {
           <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1">
             Personalization
           </p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-            ⚙️ Preferences
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+              <SlidersHorizontal size={26} className="text-blue-500" /> Preferences
+            </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Choose the topics you want in your feed
           </p>
@@ -75,7 +76,7 @@ const Preferences = () => {
           to="/"
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-700 transition-all shadow-sm"
         >
-          ← Home
+          <ArrowLeft size={16} /> Home
         </Link>
       </motion.div>
 
@@ -114,9 +115,9 @@ const Preferences = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none rounded-2xl" />
                   )}
 
-                  <span className="text-2xl flex-shrink-0">{topic.icon}</span>
+                  <span className="text-blue-500 dark:text-blue-400 flex-shrink-0">{topic.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm leading-tight">{topic.label}</p>
+                    <p className="font-plain text-xs leading-tight">{topic.label}</p>
                     <AnimatePresence>
                       {isSelected && (
                         <motion.p
@@ -172,7 +173,7 @@ const Preferences = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
             <span className="relative">
-              {saving ? '⏳ Saving...' : saved ? '✅ Saved! Redirecting...' : 'Save Preferences'}
+              {saving ? <><Loader2 size={16} className="inline animate-spin mr-2" />Saving...</> : saved ? <><Check size={16} className="inline mr-2" />Saved! Redirecting...</> : 'Save Preferences'}
             </span>
           </motion.button>
         </>

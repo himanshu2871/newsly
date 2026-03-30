@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search, X } from 'lucide-react';
 import NewsCard from '../components/NewsCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { getLatestNews, getNewsByTopic, getIndiaNews, searchNews, getPreferences } from '../services/api';
@@ -140,7 +141,7 @@ const Home = () => {
         {/* Greeting */}
         <div className="mb-5 text-center">
           <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-            {getGreeting()}{user ? `, ${user.name.split(' ')[0]}` : ''} 👋
+            {getGreeting()}{user ? `, ${user.name.split(' ')[0]}` : ''}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Here's what's happening in the world today.
@@ -154,15 +155,15 @@ const Home = () => {
               ? 'border-blue-400/60 dark:border-blue-500/50 shadow-[0_0_0_3px_rgb(59,130,246,0.12)]'
               : 'border-white/60 dark:border-gray-700/50'
           }`}>
-            <span className="text-gray-400 text-lg flex-shrink-0">🔍</span>
+            <Search size={18} className="text-gray-400 flex-shrink-0" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
-              placeholder="Search news… e.g. climate, AI, cricket"
-              className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none text-sm"
+              placeholder="Search"
+              className="flex-1 min-w-0 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none text-sm"
             />
             <AnimatePresence>
               {searchInput && (
@@ -174,7 +175,7 @@ const Home = () => {
                   onClick={clearSearch}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 flex-shrink-0 transition"
                 >
-                  ✕
+                  <X size={16} />
                 </motion.button>
               )}
             </AnimatePresence>
@@ -197,8 +198,8 @@ const Home = () => {
               className="flex items-center justify-center gap-2 mt-3"
             >
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-700/40 text-xs font-medium text-blue-700 dark:text-blue-300 backdrop-blur-md">
-                🔍 <span>"{searchQuery}"</span>
-                <button onClick={clearSearch} className="ml-1 hover:text-blue-900 dark:hover:text-blue-100 transition">✕</button>
+                <Search size={12} /> <span>"{searchQuery}"</span>
+                <button onClick={clearSearch} className="ml-1 hover:text-blue-900 dark:hover:text-blue-100 transition"><X size={12} /></button>
               </span>
               {total > 0 && (
                 <span className="text-xs text-gray-400 dark:text-gray-500">{total} results</span>
@@ -219,7 +220,7 @@ const Home = () => {
           animate={{ opacity: 1 }}
           className="text-center py-24 bg-white/40 dark:bg-gray-900/40 backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-gray-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
         >
-          <p className="text-5xl mb-4">🔍</p>
+          <Search size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <p className="text-gray-500 dark:text-gray-400 font-medium">
             No articles found. Try a different topic or search.
           </p>

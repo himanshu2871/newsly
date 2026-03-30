@@ -66,7 +66,7 @@ const Login = () => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="himanshu@example.com"
+              placeholder="Email"
               required
               className="w-full px-4 py-3 rounded-xl border border-white/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-[0_2px_10px_rgb(0,0,0,0.02)]"
             />
@@ -81,7 +81,7 @@ const Login = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              placeholder="••••••••"
+              placeholder="Password"
               required
               className="w-full px-4 py-3 rounded-xl border border-white/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-[0_2px_10px_rgb(0,0,0,0.02)]"
             />

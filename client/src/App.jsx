@@ -39,11 +39,11 @@ const AppRoutes = () => {
           <Route path="*" element={<NotFound />} />
           
           <Route element={<DashboardLayout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
             <Route path="/preferences" element={<ProtectedRoute><Preferences /></ProtectedRoute>} />
-            <Route path="/history" element={<History />} />
-            <Route path="/dailynews" element={<DailyNews />} />
+            <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+            <Route path="/dailynews" element={<ProtectedRoute><DailyNews /></ProtectedRoute>} />
           </Route>
 
 

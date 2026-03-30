@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getTodayInHistory } from '../services/api';
+import { FlaskConical, Landmark, Trophy, Palette, Swords, Cpu, Compass, DollarSign, Leaf, ScrollText, CircleAlert } from 'lucide-react';
 
 const TOPIC_ICONS = {
-  'Science': '🔬',
-  'Politics': '🏛️',
-  'Sports': '⚽',
-  'Art & Culture': '🎨',
-  'War & Conflict': '⚔️',
-  'Technology': '💻',
-  'Exploration': '🧭',
-  'Economy': '💰',
-  'Nature': '🌿',
+  'Science':       FlaskConical,
+  'Politics':      Landmark,
+  'Sports':        Trophy,
+  'Art & Culture': Palette,
+  'War & Conflict': Swords,
+  'Technology':    Cpu,
+  'Exploration':   Compass,
+  'Economy':       DollarSign,
+  'Nature':        Leaf,
 };
 
 const TOPIC_COLORS = {
@@ -27,7 +28,7 @@ const getTopicStyle = (topic) =>
   TOPIC_COLORS[topic] || 'from-gray-500/20 to-slate-500/10 border-gray-400/30 dark:border-gray-600/30';
 
 const getTopicIcon = (topic) =>
-  TOPIC_ICONS[topic] || '📜';
+  TOPIC_ICONS[topic] || ScrollText;
 
 const SkeletonCard = () => (
   <div className="rounded-2xl bg-white/50 dark:bg-gray-900/50 border border-white/50 dark:border-gray-700/40 p-5 animate-pulse">
@@ -80,7 +81,7 @@ const History = () => {
       {/* Error */}
       {error && (
         <div className="text-center py-16 text-gray-500 dark:text-gray-400">
-          <p className="text-4xl mb-3">😕</p>
+          <CircleAlert size={40} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
           <p>{error}</p>
         </div>
       )}
@@ -99,7 +100,7 @@ const History = () => {
               >
                 {/* Card Header */}
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">{getTopicIcon(event.topic)}</span>
+                  {(() => { const Icon = getTopicIcon(event.topic); return <Icon size={22} className="flex-shrink-0 text-gray-600 dark:text-gray-300" />; })()}
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       {event.topic}

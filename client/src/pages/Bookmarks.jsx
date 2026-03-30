@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getBookmarks, deleteBookmark, summarizeArticle } from '../services/api';
+import { Bookmark, Inbox, Sparkles, EyeOff, Loader2, ExternalLink, Trash2, Home, ArrowLeft } from 'lucide-react';
 
 const Bookmarks = () => {
   const navigate = useNavigate();
@@ -86,24 +87,24 @@ const Bookmarks = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1">Library</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">🔖 Bookmarks</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2"><Bookmark size={28} className="text-blue-500" /> Bookmarks</h1>
         </div>
         <Link
           to="/"
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-700 transition-all shadow-sm"
         >
-          ← Home
+          <ArrowLeft size={16} /> Home
         </Link>
       </div>
 
 
       {bookmarks.length === 0 ? (
         <div className="text-center py-20 bg-white/40 dark:bg-gray-900/40 backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-gray-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <p className="text-5xl mb-4">📭</p>
-          <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">
+          <Inbox size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+          <p className="text-gray-500 dark:text-gray-400 text-md font-medium mb-2">
             No bookmarks yet
           </p>
-          <p className="text-gray-400 dark:text-gray-500 text-sm">
+          <p className="text-gray-400 dark:text-gray-500 text-xs">
             Save articles from the home feed to read them later
           </p>
         </div>
@@ -167,8 +168,8 @@ const Bookmarks = () => {
                       className="px-5 pb-3"
                     >
                       <div className="p-3 bg-white/40 dark:bg-black/20 backdrop-blur-lg border border-white/40 dark:border-white/5 rounded-xl shadow-inner">
-                        <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
-                          ✨ AI Summary
+                        <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2 flex items-center gap-1.5">
+                          <Sparkles size={12} /> AI Summary
                         </p>
                         {summaries[bookmark.id].split('\n').filter(Boolean).map((b, i) => (
                           <p key={i} className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -188,10 +189,10 @@ const Bookmarks = () => {
                     className="text-xs py-3 text-blue-600 dark:text-blue-400 hover:bg-white/40 dark:hover:bg-gray-800/40 disabled:opacity-50 font-medium transition border-r border-white/30 dark:border-white/5"
                   >
                     {summaryLoading[bookmark.id]
-                      ? '⏳ Loading...'
+                      ? <><Loader2 size={13} className="inline animate-spin mr-1" />Loading...</>
                       : showSummary[bookmark.id]
-                        ? '🙈 Hide'
-                        : '✨ Summary'}
+                        ? <><EyeOff size={13} className="inline mr-1" />Hide</>
+                        : <><Sparkles size={13} className="inline mr-1" />Summary</>}
                   </button>
 
                   <a
@@ -200,14 +201,14 @@ const Bookmarks = () => {
                     rel="noopener noreferrer"
                     className="text-xs py-3 text-center text-gray-600 dark:text-gray-300 hover:bg-white/40 dark:hover:bg-gray-800/40 transition border-r border-white/30 dark:border-white/5"
                   >
-                    🔗 Read
+                    <ExternalLink size={13} className="inline mr-1" />Read
                   </a>
 
                   <button
                     onClick={() => handleDelete(bookmark.id)}
                     className="text-xs py-3 text-red-500 hover:bg-white/40 dark:hover:bg-red-900/20 transition"
                   >
-                    🗑️ Remove
+                    <Trash2 size={13} className="inline mr-1" />Remove
                   </button>
                 </div>
               </motion.div>
