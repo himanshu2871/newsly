@@ -96,13 +96,13 @@ Your app will be automatically served via Vite (usually on `http://localhost:517
 .
 ├── README.md
 ├── client                  # React Frontend
-│   ├── public              # Static assets (including the Newsly logo)
+│   ├── public              
 │   ├── src
-│   │   ├── components      # Reusable UI elements (Navbar, Cards, ThemeToggleButton)
-│   │   ├── pages           # Main route views (Home, Login, Register, Bookmarks)
-│   │   ├── context         # React Context (Auth, Theme)
-│   │   └── services        # API functions
-│   ├── index.html          # Web entry point 
+│   │   ├── components      
+│   │   ├── pages           
+│   │   ├── context         
+│   │   └── services        
+│   ├── index.html           
 │   ├── package.json
 │   └── vite.config.js
 └── server                  # Express Backend
