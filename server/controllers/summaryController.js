@@ -1,6 +1,4 @@
-const Groq = require('groq-sdk');
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const { groq, model } = require('../config/groq');
 
 // POST /api/summary
 exports.summarizeArticle = async (req, res) => {
@@ -11,7 +9,7 @@ exports.summarizeArticle = async (req, res) => {
 
   try {
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model,
       max_tokens: 300,
       messages: [
         {
@@ -33,7 +31,8 @@ Content: ${content || ''}`
       ]
     });
 
-    const summary = completion.choices[0].message.content;
+    const summary = completion.choices[0]?.message?.content?.trim();
+    if (!summary) throw new Error('Groq returned an empty summary.');
     res.json({ summary });
   } catch (err) {
     console.error('Groq API error:', err.message);

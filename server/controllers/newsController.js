@@ -33,13 +33,14 @@ exports.getLatestNews = async (req, res) => {
   try {
     const { data } = await axios.get('https://newsapi.org/v2/top-headlines', {
       params: {
-        language: 'en',
+        country: process.env.NEWS_COUNTRY || 'us',
         pageSize: 20,
         apiKey: process.env.NEWS_API_KEY,
       }
     });
     res.json({ articles: data.articles });
   } catch (err) {
+    console.error('NewsAPI error (latest):', err.message);
     res.status(500).json({ error: 'Failed to fetch latest news' });
   }
 };

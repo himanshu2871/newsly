@@ -52,7 +52,23 @@ cd ../client
 npm install
 ```
 
-### 2. Environment Variables
+### 2. Create the Database Tables
+After creating the PostgreSQL database named `news_aggregator`, run the schema file from the `server` directory:
+
+```powershell
+cd server
+psql -h localhost -p 5432 -U postgres -d news_aggregator -f schema.sql
+```
+
+Enter the PostgreSQL password when prompted. This creates the tables required by the backend:
+
+- `users` stores account names, email addresses, and hashed passwords.
+- `preferences` stores each user's selected topics.
+- `bookmarks` stores saved articles. Its user reference is deleted automatically if that user is deleted.
+
+The script uses `IF NOT EXISTS`, so rerunning it won't recreate tables that already exist. It does not modify existing tables.
+
+### 3. Environment Variables
 Create a `.env` file in the `server/` directory and include the necessary keys:
 ```env
 PORT=3000
@@ -69,7 +85,9 @@ GEMINI_API_KEY=your_gemini_key
 ANTHROPIC_API_KEY=your_anthropic_key
 ```
 
-### 3. Run the Development Servers
+`NEWS_COUNTRY` is optional; it selects the country used for top headlines and defaults to `us`. Change it to another supported two-letter country code if preferred.
+
+### 4. Run the Development Servers
 
 You will need to run the client and the server simultaneously in separate terminal windows.
 

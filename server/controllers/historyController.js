@@ -1,7 +1,5 @@
 const axios = require('axios');
-const Groq = require('groq-sdk');
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const { groq, model } = require('../config/groq');
 
 // Simple in-memory cache to save API tokens
 let cachedHistory = {
@@ -33,23 +31,23 @@ exports.getTodayInHistory = async (req, res) => {
     const events = wikiResponse.data.events || [];
     // Pass a broad set of events to let Groq pick diverse ones
     const historicContext = events.slice(0, 30).map((e, i) => `[${i + 1}] Year ${e.year}: ${e.text}`).join('\n');
+    if (!historicContext) {
+      throw new Error('Wikipedia returned no historical events for today.');
+    }
 
     const prompt = `You are an expert historian. Below are historical events from Wikipedia that happened on this exact calendar day:
 
 ${historicContext}
 
-From this list, pick exactly 10 events that are the most diverse — covering different domains such as science, politics, sports, art & culture, war, technology, exploration, economy, nature, medicine, etc. For each selected event, write a concise 1-2 sentence summary as if citing an encyclopedia. Do not use conversational filler.
+From this list, pick up to 10 diverse events. Do not invent events or years. For each selected event, include its number as eventIndex and write a concise 1-2 sentence summary as if citing an encyclopedia. Do not use conversational filler.
 
-Respond ONLY in this exact JSON array format (no markdown, no extra text):
-[
-  { "year": 1234, "topic": "Science", "summary": "..." },
-  { "year": 1234, "topic": "Politics", "summary": "..." },
-  ...(10 total)
-]`;
+Return only a valid JSON object with this shape:
+{"events":[{"eventIndex":1,"topic":"Science","summary":"..."}]}`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model,
       max_tokens: 1200,
+      response_format: { type: 'json_object' },
       messages: [
         {
           role: 'user',
@@ -58,17 +56,28 @@ Respond ONLY in this exact JSON array format (no markdown, no extra text):
       ]
     });
 
-    const raw = completion.choices[0].message.content.trim();
-
-    // Parse JSON from Groq response
-    let parsedEvents;
-    try {
-      parsedEvents = JSON.parse(raw);
-    } catch {
-      // If Groq wraps in markdown fences, strip them
-      const match = raw.match(/\[[\s\S]*\]/);
-      parsedEvents = match ? JSON.parse(match[0]) : [];
+    const raw = completion.choices[0]?.message?.content;
+    if (!raw) throw new Error('Groq returned no historical summaries.');
+    const result = JSON.parse(raw);
+    if (!Array.isArray(result.events)) {
+      throw new Error('Groq returned historical events in an invalid format.');
     }
+    if (result.events.length === 0) {
+      throw new Error('Groq returned no historical events.');
+    }
+
+    const sourceEvents = events.slice(0, 30);
+    const parsedEvents = result.events.map((event) => {
+      const eventIndex = Number(event.eventIndex);
+      if (!Number.isInteger(eventIndex) || eventIndex < 1 || eventIndex > sourceEvents.length) {
+        throw new Error(`Groq returned an invalid event index: ${event.eventIndex}`);
+      }
+      return {
+        year: sourceEvents[eventIndex - 1].year,
+        topic: event.topic,
+        summary: event.summary,
+      };
+    });
 
     // Update cache
     cachedHistory = {
