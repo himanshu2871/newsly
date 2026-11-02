@@ -1,4 +1,5 @@
 import { Outlet, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import TopicFilter from './TopicFilter';
 import PillNavigation from './PillNavigation';
 
@@ -9,7 +10,13 @@ const DashboardLayout = () => {
 
   // Persist topic across page navigations using localStorage
   const savedTopic = localStorage.getItem('newsly_topic') || 'latest';
-  const activeTopic = searchParams.get('topic') || savedTopic;
+  const activeTopic = searchParams.get('topic') || (location.pathname === '/' ? 'india' : savedTopic);
+
+  useEffect(() => {
+    if (location.pathname === '/' && !searchParams.has('topic')) {
+      navigate('/?topic=india', { replace: true });
+    }
+  }, [location.pathname, location.search, navigate, searchParams]);
 
   const handleTopicChange = (topicId) => {
     localStorage.setItem('newsly_topic', topicId);
