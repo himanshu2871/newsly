@@ -21,7 +21,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logoutUser();
     setMenuOpen(false);
-    navigate('/login');
+    navigate('/');
   };
 
   const isActive = (path) => location.pathname === path;
@@ -81,9 +81,9 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className={`${navLink} ${isActive('/login') ? activeClass : inactiveClass}`}>
+              {/* <Link to="/login" className={`${navLink} ${isActive('/login') ? activeClass : inactiveClass}`}>
                 Login
-              </Link>
+              </Link> */}
               <Link
                 to="/register"
                 className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition font-medium"
@@ -167,13 +167,13 @@ const Navbar = () => {
           >
             <Home size={16} /> Home
           </Link>
-          <Link
+          {/* <Link
             to="/login"
             onClick={() => setMenuOpen(false)}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 py-2"
           >
             Login
-          </Link>
+          </Link> */}
           <Link
             to="/register"
             onClick={() => setMenuOpen(false)}

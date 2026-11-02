@@ -2,15 +2,65 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { summarizeArticle, saveBookmark, deleteBookmark, checkBookmark } from '../services/api';
-import { Bookmark, Sparkles, EyeOff, Loader2, ExternalLink } from 'lucide-react';
+import { Bookmark, Sparkles, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
+
+const MotionDiv = motion.div;
 
 const NewsCard = ({ article }) => {
   const { user } = useAuth();
+  const [imageSrc, setImageSrc] = useState(article.urlToImage || '');
+  const [shouldSearchImage, setShouldSearchImage] = useState(!article.urlToImage);
   const [summary, setSummary] = useState('');
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkId, setBookmarkId] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [summaryError, setSummaryError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    if (!shouldSearchImage) return undefined;
+
+    const findRelatedImage = async () => {
+      try {
+        const params = new URLSearchParams({
+          action: 'query',
+          generator: 'search',
+          gsrsearch: `filetype:bitmap ${article.title}`,
+          gsrnamespace: '6',
+          gsrlimit: '5',
+          prop: 'imageinfo',
+          iiprop: 'url',
+          iiurlwidth: '640',
+          format: 'json',
+          origin: '*',
+        });
+        const response = await fetch(
+          `https://commons.wikimedia.org/w/api.php?${params}`,
+          { signal: controller.signal }
+        );
+        if (!response.ok) throw new Error(`Wikimedia image search failed: ${response.status}`);
+
+        const data = await response.json();
+        const pages = Object.values(data.query?.pages || {});
+        const image = pages.find(page => page.thumbnail?.source)?.thumbnail?.source;
+        if (active && image) setImageSrc(image);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Related image lookup failed:', error);
+        }
+      }
+    };
+
+    findRelatedImage();
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [article.title, shouldSearchImage]);
 
   // Check bookmark status from DB on mount
   useEffect(() => {
@@ -28,6 +78,8 @@ const NewsCard = ({ article }) => {
       setShowSummary(!showSummary);
       return;
     }
+    setSummaryError('');
+    setShowSummary(true);
     setSummaryLoading(true);
     try {
       const res = await summarizeArticle({
@@ -36,10 +88,10 @@ const NewsCard = ({ article }) => {
         content: article.content,
       });
       setSummary(res.data.summary);
-      setShowSummary(true);
-    } catch {
-      setSummary('Failed to generate summary. Please try again.');
-      setShowSummary(true);
+    } catch (error) {
+      setSummaryError(
+        error.response?.data?.error || 'Failed to generate summary. Please try again.'
+      );
     } finally {
       setSummaryLoading(false);
     }
@@ -87,122 +139,145 @@ const NewsCard = ({ article }) => {
   if (!article.title || article.title === '[Removed]') return null;
 
   return (
-    <motion.div
+    <MotionDiv
       variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
       transition={{ duration: 0.35 }}
-      className="group bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/50 dark:border-gray-700/50 hover:shadow-[0_12px_40px_rgb(0,0,0,0.10)] dark:hover:shadow-[0_12px_40px_rgb(0,0,0,0.35)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
+      className="group h-[460px] [perspective:1200px] hover:-translate-y-0.5 transition-transform duration-300"
     >
-      {/* Image with gradient overlay */}
-      {article.urlToImage && (
-        <div className="relative w-full h-48 overflow-hidden">
-          <img
-            src={article.urlToImage}
-            alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => e.target.parentElement.style.display = 'none'}
-          />
-          {/* Bottom gradient fade */}
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
-        </div>
-      )}
+      <MotionDiv
+        animate={{ rotateY: showSummary ? 180 : 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformStyle: 'preserve-3d' }}
+        className="relative h-full w-full rounded-2xl shadow-sm hover:shadow-[0_12px_40px_rgb(0,0,0,0.10)] dark:hover:shadow-[0_12px_40px_rgb(0,0,0,0.35)] transition-shadow duration-300"
+      >
+        <div
+          style={{ backfaceVisibility: 'hidden' }}
+          className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-white/50 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60"
+        >
+          <div className="relative h-48 w-full flex-shrink-0 overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
+            {imageSrc && (
+              <>
+                <img
+                  src={imageSrc}
+                  alt={article.title}
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={() => {
+                    setImageSrc('');
+                    if (article.urlToImage && imageSrc === article.urlToImage) {
+                      setShouldSearchImage(true);
+                    }
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+              </>
+            )}
+          </div>
 
-      <div className="p-5 flex flex-col flex-1">
-        {/* Source + Date */}
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-blue-700 dark:text-blue-300 bg-white/60 dark:bg-blue-900/40 backdrop-blur-md border border-white/40 dark:border-blue-800/50 px-2.5 py-1 rounded-full shadow-sm">
-            {article.source?.name || 'Unknown'}
-          </span>
-          <span className="text-xs text-gray-400">
-            {formatDate(article.publishedAt)}
-          </span>
-        </div>
+          <div className="flex min-h-0 flex-1 flex-col p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="rounded-full border border-white/40 bg-white/60 px-2.5 py-1 text-xs font-medium text-blue-700 shadow-sm backdrop-blur-md dark:border-blue-800/50 dark:bg-blue-900/40 dark:text-blue-300">
+                {article.source?.name || 'Unknown'}
+              </span>
+              <span className="text-xs text-gray-400">
+                {formatDate(article.publishedAt)}
+              </span>
+            </div>
 
-        {/* Title */}
-        <h3 className="text-gray-900 dark:text-white font-semibold text-sm leading-snug mb-2 flex-1">
-          {article.title}
-        </h3>
+            <h3 className="mb-2 min-h-[4.5rem] line-clamp-4 text-sm font-semibold leading-snug text-gray-900 dark:text-white">
+              {article.title}
+            </h3>
 
-        {/* Description */}
-        {article.description && (
-          <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed line-clamp-3 mb-4">
-            {article.description}
-          </p>
-        )}
-
-        {/* AI Summary */}
-        {showSummary && summary && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="mb-4 p-3 bg-white/40 dark:bg-black/20 backdrop-blur-lg border border-white/40 dark:border-white/5 rounded-xl shadow-inner"
-          >
-            <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2 flex items-center gap-1.5">
-              <Sparkles size={12} /> AI Summary
+            <p className="mb-4 min-h-[3.375rem] line-clamp-3 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+              {article.description || ''}
             </p>
-            <ul className="space-y-2 mt-2">
-              {bullets.map((b, i) => {
-                const textColors = [
-                  'text-indigo-700 dark:text-indigo-300',
-                  'text-emerald-700 dark:text-emerald-300',
-                  'text-rose-700 dark:text-rose-300'
-                ];
-                const dotColors = [
-                  'bg-indigo-500 dark:bg-indigo-400',
-                  'bg-emerald-500 dark:bg-emerald-400',
-                  'bg-rose-500 dark:bg-rose-400'
-                ];
-                return (
-                  <li key={i} className="flex gap-2 items-start">
-                    <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${dotColors[i % dotColors.length]}`} />
-                    <span className={`text-xs leading-relaxed font-medium ${textColors[i % textColors.length]}`}>
-                      {b}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </motion.div>
-        )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 mt-auto">
-          <button
-            onClick={handleSummary}
-            disabled={summaryLoading}
-            className="flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium transition"
-          >
-            {summaryLoading
-              ? <><Loader2 size={13} className="animate-spin" /> Summarizing...</>
-              : showSummary
-                ? <><EyeOff size={13} /> Hide Summary</>
-                : <><Sparkles size={13} /> AI Summary</>}
-          </button>
+            <div className="mt-auto flex items-center gap-2">
+              <button
+                onClick={handleSummary}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700"
+              >
+                <Sparkles size={13} /> AI Summary
+              </button>
 
-          <button
-            onClick={handleBookmark}
-            title={bookmarked ? 'Remove bookmark' : 'Save bookmark'}
-            className="p-2 rounded-xl bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 transition shadow-sm"
-          >
-            <Bookmark
-              size={16}
-              className={bookmarked
-                ? 'fill-blue-500 text-blue-500'
-                : 'fill-transparent text-gray-500 hover:text-blue-500'
-              }
-            />
-          </button>
+              <button
+                onClick={handleBookmark}
+                title={bookmarked ? 'Remove bookmark' : 'Save bookmark'}
+                className="rounded-xl border border-white/50 bg-white/40 p-2 shadow-sm backdrop-blur-sm transition dark:border-gray-700/50 dark:bg-gray-800/40"
+              >
+                <Bookmark
+                  size={16}
+                  className={bookmarked
+                    ? 'fill-blue-500 text-blue-500'
+                    : 'fill-transparent text-gray-500 hover:text-blue-500'
+                  }
+                />
+              </button>
 
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 text-gray-500 hover:text-blue-600 transition shadow-sm"
-          >
-            <ExternalLink size={16} />
-          </a>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-white/50 bg-white/40 p-2 text-gray-500 shadow-sm backdrop-blur-sm transition hover:text-blue-600 dark:border-gray-700/50 dark:bg-gray-800/40"
+              >
+                <ExternalLink size={16} />
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-    </motion.div>
+
+        <div
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-white/50 bg-white/70 p-5 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/70"
+        >
+          <div className="mb-4 flex items-center gap-2">
+            <Sparkles size={16} className="text-blue-600 dark:text-blue-400" />
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">AI Summary</h3>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            {summaryLoading ? (
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <Loader2 size={16} className="animate-spin" />
+                Generating summary...
+              </div>
+            ) : summaryError ? (
+              <p className="text-sm text-red-600 dark:text-red-400">{summaryError}</p>
+            ) : (
+              <ul className="space-y-4">
+                {bullets.map((bullet, index) => {
+                  const textColors = [
+                    'text-indigo-700 dark:text-indigo-300',
+                    'text-emerald-700 dark:text-emerald-300',
+                    'text-rose-700 dark:text-rose-300',
+                  ];
+                  const dotColors = [
+                    'bg-indigo-500 dark:bg-indigo-400',
+                    'bg-emerald-500 dark:bg-emerald-400',
+                    'bg-rose-500 dark:bg-rose-400',
+                  ];
+
+                  return (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${dotColors[index % dotColors.length]}`} />
+                      <span className={`text-sm leading-relaxed font-medium ${textColors[index % textColors.length]}`}>
+                        {bullet}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          <button
+            onClick={() => setShowSummary(false)}
+            className="mt-4 flex w-full flex-shrink-0 items-center justify-center gap-2 rounded-xl border border-white/50 bg-white/50 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-white/80 dark:border-gray-700/50 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:bg-gray-800"
+          >
+            <ArrowLeft size={14} /> Back to article
+          </button>
+        </div>
+      </MotionDiv>
+    </MotionDiv>
   );
 };
 

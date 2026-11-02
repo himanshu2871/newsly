@@ -10,19 +10,18 @@ exports.summarizeArticle = async (req, res) => {
   try {
     const completion = await groq.chat.completions.create({
       model,
-      max_tokens: 300,
+      max_completion_tokens: 800,
+      reasoning_effort: 'low',
+      response_format: { type: 'json_object' },
       messages: [
         {
           role: 'user',
-          content: `Summarize this news article in exactly 3 bullet points.
-Each bullet point MUST cover a completely different aspect of the article:
-- Bullet 1: What happened (the main event/fact)
-- Bullet 2: How or why it happened (context, reason, or key details)
-- Bullet 3: What's the impact or what happens next (outcome, reaction, or future implications)
-
-Be concise, factual and easy to understand.
-Do not repeat the same information across bullet points.
-Do not include any intro text, just the 3 bullet points starting with "•".
+          content: `Write a concise news summary using only the supplied information.
+Return a JSON object with a "bullets" array containing exactly 3 complete strings:
+1. The main event.
+2. Its context or cause.
+3. Its impact or what happens next.
+Keep each bullet to at most 25 words. Do not invent details or repeat information.
 
 Title: ${title || ''}
 Description: ${description || ''}
@@ -31,11 +30,37 @@ Content: ${content || ''}`
       ]
     });
 
-    const summary = completion.choices[0]?.message?.content?.trim();
-    if (!summary) throw new Error('Groq returned an empty summary.');
+    const choice = completion.choices[0];
+    if (choice?.finish_reason === 'length') {
+      throw new Error('Summary generation reached the output limit.');
+    }
+
+    const raw = choice?.message?.content?.trim();
+    if (!raw) throw new Error('Groq returned an empty summary.');
+
+    let result;
+    try {
+      result = JSON.parse(raw);
+    } catch {
+      throw new Error('Groq returned an incomplete summary.');
+    }
+
+    if (
+      !Array.isArray(result.bullets) ||
+      result.bullets.length !== 3 ||
+      result.bullets.some(bullet => typeof bullet !== 'string' || !bullet.trim())
+    ) {
+      throw new Error('Groq returned an incomplete summary.');
+    }
+
+    const summary = result.bullets.map(bullet => `• ${bullet.trim()}`).join('\n');
     res.json({ summary });
   } catch (err) {
     console.error('Groq API error:', err.message);
-    res.status(500).json({ error: 'Summary generation failed' });
+    const message = err.message === 'Summary generation reached the output limit.' ||
+      err.message === 'Groq returned an incomplete summary.'
+      ? 'The AI returned an incomplete summary. Please try again.'
+      : 'The AI summary service is temporarily unavailable. Please try again shortly.';
+    res.status(502).json({ error: message });
   }
 };

@@ -33,7 +33,7 @@ const DashboardLayout = () => {
             onTopicChange={handleTopicChange} 
           />
         </div>
-        <div className="flex-shrink-0">
+        <div className="min-w-0 flex-1 sm:flex-initial">
           <PillNavigation />
         </div>
       </div>
